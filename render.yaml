@@ -1,0 +1,68 @@
+services:
+  - type: web
+    name: among-us-telegram-bot
+    env: python
+    plan: free
+    buildCommand: |
+      pip install --upgrade pip
+      pip install python-telegram-bot==20.7
+      pip install fastapi==0.104.1
+      pip install "uvicorn[standard]==0.24.0"
+      pip install APScheduler==3.10.4
+      pip install "motor==3.3.2"
+      pip install "pymongo[srv]==4.6.1"
+      pip install python-dotenv==1.0.0
+      pip install "certifi==2024.2.2"
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      # ── REQUIRED ──────────────────────────────────────────────────
+      - key: BOT_TOKEN
+        sync: false
+        # Your bot token from @BotFather
+
+      - key: OWNER_ID
+        sync: false
+        # Your Telegram numeric user ID (get from @userinfobot)
+
+      - key: MONGODB_URI
+        sync: false
+        # mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/
+
+      # ── AUTO-PROVIDED BY RENDER — do NOT set manually ─────────────
+      - key: RENDER_EXTERNAL_URL
+        fromService:
+          name: among-us-telegram-bot
+          type: web
+          property: url
+        # Render fills this in automatically — your app URL
+
+      # ── OPTIONAL ──────────────────────────────────────────────────
+      - key: DB_NAME
+        value: among_us_bot
+
+      - key: SECRET_TOKEN
+        generateValue: true
+        # Render auto-generates a random secret for webhook security
+
+      - key: LOG_LEVEL
+        value: INFO
+
+      - key: GAME_START_HOUR
+        value: "9"
+
+      - key: SCORE_INTERVAL_HOURS
+        value: "6"
+
+      - key: VOTING_START_HOUR
+        value: "19"
+
+      - key: REVEAL_HOUR
+        value: "21"
+
+      - key: TASK_INTERVAL_HOURS
+        value: "2"
+
+      - key: PYTHON_VERSION
+        value: "3.11.0"
