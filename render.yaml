@@ -1,0 +1,51 @@
+services:
+  - type: web
+    name: among-us-telegram-bot
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+
+      - key: OWNER_ID
+        sync: false
+
+      - key: MONGODB_URI
+        sync: false
+
+      - key: RENDER_EXTERNAL_URL
+        fromService:
+          name: among-us-telegram-bot
+          type: web
+          property: url
+
+      - key: DB_NAME
+        value: among_us_bot
+
+      - key: SECRET_TOKEN
+        generateValue: true
+
+      - key: LOG_LEVEL
+        value: INFO
+
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+
+      - key: GAME_START_HOUR
+        value: "9"
+
+      - key: SCORE_INTERVAL_HOURS
+        value: "6"
+
+      - key: VOTING_START_HOUR
+        value: "19"
+
+      - key: REVEAL_HOUR
+        value: "21"
+
+      - key: TASK_INTERVAL_HOURS
+        value: "2"
